@@ -1,0 +1,11 @@
+[package]
+edition = "2021"
+name = "beaconchain-prometheus-exporter"
+version = "0.1.0"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+prometheus_exporter = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0.59", features = ["raw_value"] }
