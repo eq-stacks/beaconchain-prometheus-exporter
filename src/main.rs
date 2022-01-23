@@ -10,8 +10,9 @@ mod metrics;
 use metrics::Metrics;
 
 async fn scrape_metrics(metrics: &Metrics) -> Result<(), Box<dyn std::error::Error>> {
-    let root_url: String = env::var("ROOT_URL").unwrap();
-    let validator_index: String = env::var("VALIDATOR_INDEX").unwrap();
+    let root_url: String = env::var("ROOT_URL").expect("Please set ROOT_URL env var");
+    let validator_index: String =
+        env::var("VALIDATOR_INDEX").expect("Please set VALIDATOR_INDEX env var");
     let validator_url = format!("{}/api/v1/validator/{}", root_url, validator_index);
 
     let urls = vec![
