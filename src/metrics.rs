@@ -35,28 +35,27 @@ impl Metrics {
     }
 }
 
-
 #[cfg(test)]
 mod test {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn test_metrics_init() {
-    let metrics = Metrics::init();
+    #[test]
+    fn test_metrics_init() {
+        let metrics = Metrics::init();
 
-    assert_eq!(metrics.attestation_efficiency.get(), 0.0);
-    assert_eq!(metrics.attestation_effectiveness.get(), 0.0);
-    assert_eq!(metrics.optimal_inclusion_distance.get(), 0);
-    assert_eq!(metrics.validator_balance.get(), 0);
+        assert_eq!(metrics.attestation_efficiency.get(), 0.0);
+        assert_eq!(metrics.attestation_effectiveness.get(), 0.0);
+        assert_eq!(metrics.optimal_inclusion_distance.get(), 0);
+        assert_eq!(metrics.validator_balance.get(), 0);
 
-    metrics.attestation_efficiency.set(1.234);
-    metrics.attestation_effectiveness.set(0.88823);
-    metrics.optimal_inclusion_distance.set(2);
-    metrics.validator_balance.set(3204440232);
+        metrics.attestation_efficiency.set(1.234);
+        metrics.attestation_effectiveness.set(0.88823);
+        metrics.optimal_inclusion_distance.set(2);
+        metrics.validator_balance.set(3204440232);
 
-    assert_eq!(metrics.attestation_efficiency.get(), 1.234);
-    assert_eq!(metrics.attestation_effectiveness.get(), 0.88823);
-    assert_eq!(metrics.optimal_inclusion_distance.get(), 2);
-    assert_eq!(metrics.validator_balance.get(), 3204440232)
-  }
+        assert_eq!(metrics.attestation_efficiency.get(), 1.234);
+        assert_eq!(metrics.attestation_effectiveness.get(), 0.88823);
+        assert_eq!(metrics.optimal_inclusion_distance.get(), 2);
+        assert_eq!(metrics.validator_balance.get(), 3204440232)
+    }
 }
