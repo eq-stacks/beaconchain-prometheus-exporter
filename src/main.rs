@@ -66,7 +66,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         }
     });
 
-    info!("Prometheus metrics exported to 0.0.0.0:9184");
-
     forever.await?
 }
