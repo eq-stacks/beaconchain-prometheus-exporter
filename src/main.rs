@@ -52,6 +52,8 @@ async fn scrape_metrics(metrics: &Metrics) -> Result<(), Box<dyn std::error::Err
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    env_logger::init();
+
     prometheus_exporter::start("0.0.0.0:9184".parse().expect("failed to parse binding"))
         .expect("failed to start prometheus exporter");
 
