@@ -1,7 +1,6 @@
 use std::env;
 use std::time::Duration;
 
-use log::info;
 use tokio::{task, time};
 
 mod beaconchain;
