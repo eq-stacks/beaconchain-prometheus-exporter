@@ -18,4 +18,4 @@ RUN apt-get install ca-certificates -y
 ENV RUST_LOG=info
 ENV ROOT_URL=https://prater.beaconcha.in
 
-CMD /exporter
+ENTRYPOINT [ "/exporter" ]
