@@ -1,6 +1,7 @@
 use std::env;
 use std::time::Duration;
 
+use log::info;
 use tokio::{task, time};
 
 mod beaconchain;
@@ -62,6 +63,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
             scrape_metrics(&metrics).await.unwrap();
         }
     });
+
+    info!("Prometheus metrics exported to 0.0.0.0:9184");
 
     forever.await?
 }
