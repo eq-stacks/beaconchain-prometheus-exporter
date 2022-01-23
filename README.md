@@ -35,4 +35,4 @@ Issues and PRs welcome.
 
 ## License
 
-MIT
+MIT, Copyright (c) 2022 Equilibrium
