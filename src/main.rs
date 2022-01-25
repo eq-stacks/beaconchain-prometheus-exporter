@@ -56,7 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let forever = task::spawn(async {
         let metrics = Metrics::init();
-        let mut interval = time::interval(Duration::from_millis(24000));
+        let mut interval = time::interval(Duration::from_millis(30000));
         loop {
             interval.tick().await;
             scrape_metrics(&metrics).await.unwrap();
