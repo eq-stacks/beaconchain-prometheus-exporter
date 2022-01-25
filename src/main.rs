@@ -4,7 +4,7 @@ use std::time::Duration;
 use tokio::{task, time};
 
 mod beaconchain;
-use beaconchain::{BeaconchainResponse, ResponseType};
+use beaconchain::{Attestation, BeaconchainResponse, ResponseType};
 
 mod metrics;
 use metrics::Metrics;
@@ -39,9 +39,7 @@ async fn scrape_metrics(metrics: &Metrics) -> Result<(), Box<dyn std::error::Err
                 .set(attestation_effectiveness),
             ResponseType::Performance { balance } => metrics.validator_balance.set(balance as i64),
             ResponseType::Attestations(attestations) => metrics.optimal_inclusion_distance.set(
-                attestations.first().unwrap().inclusionslot
-                    - attestations.first().unwrap().attesterslot
-                    - 1,
+                calculate_optimal_inclusion_distance(attestations.first().unwrap())
             ),
         };
     }
@@ -66,4 +64,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     });
 
     forever.await?
+}
+
+fn calculate_optimal_inclusion_distance(attestation: &Attestation) -> i64 {
+    match attestation.inclusionslot {
+        0 => 0,
+        _ => (attestation.inclusionslot - attestation.attesterslot - 1)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_calculate_optimal_inclusion_distance_when_inclusion_is_zero() {
+        let input = r#"{ "data": [{ "attesterslot": 3024077, "inclusionslot": 0 }] }"#;
+        let result = serde_json::from_str::<BeaconchainResponse>(&input).unwrap();
+
+        if let ResponseType::Attestations(attestations) = result.data {
+            let optimal_inclusion_distance = calculate_optimal_inclusion_distance(attestations.first().unwrap());
+
+            assert_eq!(optimal_inclusion_distance, 0)
+        }
+
+    }
 }
