@@ -51,7 +51,7 @@ mod test {
         assert_eq!(
             metrics
                 .attestation_efficiency
-                .with(Labels { validator_index })
+                .with_label_values(&["validator_index", validator_index])
                 .get(),
             0.0
         );
