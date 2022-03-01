@@ -23,24 +23,36 @@ async fn scrape_metrics(metrics: &Metrics) -> Result<(), Box<dyn std::error::Err
     ];
 
     for url in urls.iter() {
-        let resp = reqwest::get(url)
-            .await?
-            .json::<BeaconchainResponse>()
-            .await?;
+        let req = reqwest::get(url).await?;
+        let headers = req.headers();
+
+        println!("{:?}", headers);
+
+        let resp = req.json::<BeaconchainResponse>().await?;
 
         match resp.data {
             ResponseType::AttestationEfficiency {
                 attestation_efficiency,
-            } => metrics.attestation_efficiency.set(attestation_efficiency),
+            } => metrics
+                .attestation_efficiency
+                .with_label_values(&["validator_pk", &validator_index])
+                .set(attestation_efficiency),
             ResponseType::AttestationEffectiveness {
                 attestation_effectiveness,
             } => metrics
                 .attestation_effectiveness
+                .with_label_values(&["validator_pk", &validator_index])
                 .set(attestation_effectiveness),
-            ResponseType::Performance { balance } => metrics.validator_balance.set(balance as i64),
-            ResponseType::Attestations(attestations) => metrics.optimal_inclusion_distance.set(
-                calculate_optimal_inclusion_distance(attestations.first().unwrap())
-            ),
+            ResponseType::Performance { balance } => metrics
+                .validator_balance
+                .with_label_values(&["validator_pk", &validator_index])
+                .set(balance as i64),
+            ResponseType::Attestations(attestations) => metrics
+                .optimal_inclusion_distance
+                .with_label_values(&["validator_pk", &validator_index])
+                .set(calculate_optimal_inclusion_distance(
+                    attestations.first().unwrap(),
+                )),
         };
     }
 
@@ -69,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 fn calculate_optimal_inclusion_distance(attestation: &Attestation) -> i64 {
     match attestation.inclusionslot {
         0 => 0,
-        _ => (attestation.inclusionslot - attestation.attesterslot - 1)
+        _ => (attestation.inclusionslot - attestation.attesterslot - 1),
     }
 }
 
@@ -83,10 +95,10 @@ mod test {
         let result = serde_json::from_str::<BeaconchainResponse>(&input).unwrap();
 
         if let ResponseType::Attestations(attestations) = result.data {
-            let optimal_inclusion_distance = calculate_optimal_inclusion_distance(attestations.first().unwrap());
+            let optimal_inclusion_distance =
+                calculate_optimal_inclusion_distance(attestations.first().unwrap());
 
             assert_eq!(optimal_inclusion_distance, 0)
         }
-
     }
 }
